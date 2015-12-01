@@ -28,10 +28,20 @@ gridded(grd) <- TRUE
 proj4string(grd) <- proj4string(b)
 
 plot(grd, cex = 1.5, col = "grey")
-points(b, pch = 1, col = "red", cex = 1)
 
-idw.spatial <- idw(formula = bio_impact ~ 1, locations = b, newdata = grd, idp=1)
+grd_write <- as(as(grd, "SpatialPixels"), "SpatialPolygons")
 
-rast <- raster(idw)
-writeRaster(rast, filename="/home/dan/Desktop/GitRepo/WBVFM/test.tif", format="GTiff", overwrite=TRUE)
+IDs <- sapply(slot(grd_write, "polygons"), function(x) slot(x, "ID"))
+df <- data.frame(rep(0, length(IDs)), row.names=IDs)
+SPDFxx <- SpatialPolygonsDataFrame(grd_write, df)
+writePolyShape(SPDFxx, "/home/dan/Desktop/GitRepo/WBVFM/pred.shp")
+
+
+
+#points(b, pch = 1, col = "red", cex = 1)
+
+#idw.spatial <- idw(formula = bio_impact ~ 1, locations = b, newdata = grd, idp=1)
+
+#rast <- raster(idw)
+#writeRaster(rast, filename="/home/dan/Desktop/GitRepo/WBVFM/test.tif", format="GTiff", overwrite=TRUE)
 
